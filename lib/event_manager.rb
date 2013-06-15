@@ -7,6 +7,14 @@ def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5,"0")[0..4]
 end
 
+def legislators_by_zipcode(zipcode)
+	legislators = Sunlight::Congress::Legislator.by_zipcode(zipcode)
+
+	legislator_names = legislators.collect do |legislator|
+		"#{legislator.first_name} #{legislator.last_name}"
+	end
+end
+
 puts "Event Manager Initialized!"
 
 contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
@@ -16,7 +24,7 @@ contents.each do |row|
 	
 	zipcode = clean_zipcode(row[:zipcode])
 
-	legislators = Sunlight::Congress::Legislator.by_zipcode(zipcode)
+	legislators = legislators_by_zipcode(zipcode).join(", ")
 
 	puts "#{name} #{zipcode} #{legislators}"
 end
