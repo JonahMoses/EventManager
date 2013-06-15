@@ -1,17 +1,11 @@
-require "csv"
+require 'csv'
+require 'sunlight/congress'
+
+Sunlight::Congress.api_key = "e179a6973728c4dd3fb1204283aaccb5"
 
 def clean_zipcode(zipcode)
-  if zipcode.nil?
-    "00000"
-  elsif zipcode.length < 5
-    zipcode.rjust(5,"0")
-  elsif zipcode.length > 5
-    zipcode[0..4]
-  else
-    zipcode
-  end
+  zipcode.to_s.rjust(5,"0")[0..4]
 end
-
 
 puts "Event Manager Initialized!"
 
@@ -22,9 +16,7 @@ contents.each do |row|
 	
 	zipcode = clean_zipcode(row[:zipcode])
 
-	# if the zip code is exactly five digits, assume that it is ok
-	# if the zip code is more than 5 digits, truncate it to the first 5 digits
-	# if the zip code is less than 5 digits, add zeros to the front until it becomes five digits
+	legislators = Sunlight::Congress::Legislator.by_zipcode(zipcode)
 
-	puts "#{name} #{zipcode}"
+	puts "#{name} #{zipcode} #{legislators}"
 end
