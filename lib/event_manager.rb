@@ -22,6 +22,11 @@ def save_thank_you_letters(id,form_letter)
   end
 end
 
+def clean_phone_number(homephone)
+	homephone.to_s.rjust(10,"0")[1..10]	
+end
+
+
 puts "EventManager initialized."
 
 contents = CSV.open 'event_attendees.csv', headers: true, header_converters: :symbol
@@ -34,6 +39,7 @@ contents.each do |row|
   name = row[:first_name]
   zipcode = clean_zipcode(row[:zipcode])
   legislators = legislators_by_zipcode(zipcode)
+  phone_number = clean_phone_number(row[:homephone])
 
   form_letter = erb_template.result(binding)
 
